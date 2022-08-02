@@ -1,5 +1,6 @@
 import { Component } from "react";
-// import logo from "./logo.svg"
+import CardList from "./components/card-list/card-list.component";
+import SearchBox from "./components/search-box/search-box.component";
 import "./App.css";
 import React from "react";
 
@@ -13,10 +14,11 @@ class App extends Component {
             monsters: [],
             searchField: "",
         };
-        console.log("Constructor");
     }
+    // constructor -> render -> componentDidMount ->setState(render)=>
+    // setState will triger render
+    // props change will also triger render
     componentDidMount() {
-        console.log("ComponentDidMount");
         fetch("https://jsonplaceholder.typicode.com/users")
             .then((response) => response.json())
             .then((users) => {
@@ -25,6 +27,7 @@ class App extends Component {
                 });
             });
     }
+
     onSearchChange = (event) => {
         // doesn't render extra anonamous function every time search is changed
         // Only initializes once when the class component is initialized
@@ -33,23 +36,22 @@ class App extends Component {
             return { searchField };
         });
     };
+
     render() {
-        console.log("render");
         const { monsters, searchField } = this.state;
+        console.log("Render from App");
         const { onSearchChange } = this;
         const filteredMonsters = monsters.filter((monster) => {
             return monster.name.toLocaleLowerCase().includes(searchField);
         });
         return (
             <div className="App">
-                <input className="search-box" type="search" placeholder="search monsters" onChange={onSearchChange} />
-                {filteredMonsters.map((monster) => {
-                    return (
-                        <div key={monster.id}>
-                            <h1>{monster.name}</h1>
-                        </div>
-                    );
-                })}
+                <SearchBox
+                    className="monster-search-box"
+                    onChangeHandler={onSearchChange}
+                    placeholder="search monsters"
+                />
+                <CardList monsters={filteredMonsters} />
             </div>
         );
     }
